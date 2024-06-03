@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id       Int    @id @default(autoincrement())
+  workName String @default("Bhoomi")
+  team     Team[]
+}
+
+model Team {
+  team_index  Int       @id @default(autoincrement())
+  team_name   String    @unique
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+  issues      Issues[]
+}
+
+model Issues {
+  index      Int        @id @default(autoincrement())
+  name       String
+  status     Status     @default(Todo)
+  priority   Priorities @default(No)
+  createdAt  DateTime
+  updatedAt  DateTime   @updatedAt
+  assingedTo String
+  project    String
+  label      Labels
+  team       Team       @relation(fields: [teamIndex], references: [team_index])
+  teamIndex  Int
+}
+
+enum Status {
+  Todo
+  InProgress
+  Backlog
+  Canceled
+  Duplicate
+}
+
+enum Priorities {
+  No
+  Low
+  Medium
+  High
+}
+
+enum Labels {
+  Bug
+  Feature
+  Improvement
+}
