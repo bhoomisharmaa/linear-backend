@@ -30,7 +30,6 @@ async function getIssues(issueStatus: string) {
         },
       },
     });
-    console.log(issue[0].team[0].issues);
     return issue[0].team[0].issues;
   } catch (error) {
     console.error("Error fetching issues:", error);
@@ -51,6 +50,68 @@ router.get("/get-issues/:status", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error", error: error });
   }
 });
+
+async function updateIssue(
+  issueIndex: number,
+  updateKey: keyof Prisma.IssuesUpdateInput,
+  stuff: string
+) {
+  try {
+    const data: Prisma.IssuesUpdateInput = {
+      [updateKey]: stuff,
+    };
+    const issue = await prisma.workspace.update({
+      where: {
+        id: 1,
+      },
+      data: {
+        team: {
+          update: [
+            {
+              where: { team_index: 1 },
+              data: {
+                issues: {
+                  update: [
+                    {
+                      where: { index: issueIndex },
+                      data: data,
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error updating issue:", error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+router.post(
+  "/update-issues/:issueIndex",
+  async (req: Request, res: Response) => {
+    const { updateItem, updateKey } = req.body;
+    const { issueIndex } = req.params;
+    if (!updateItem || !issueIndex || !updateKey) {
+      return res
+        .status(400)
+        .send("updateItem, issueIndex, and updateKey are required");
+    }
+
+    try {
+      await updateIssue(parseInt(issueIndex), updateKey, updateItem);
+      res.status(200).send("Issue updated successfully");
+    } catch (error) {
+      console.error("Error updating issue:", error);
+      res.status(500).send("Error updating issue");
+    }
+  }
+);
 
 async function createWorkshop() {
   try {
@@ -82,7 +143,6 @@ async function createWorkshop() {
         },
       },
     });
-    console.log(workshop);
   } catch (error) {
     console.error("Error deleting workspace:", error);
     throw error;
