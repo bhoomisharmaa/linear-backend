@@ -28,36 +28,54 @@ model Team {
 }
 
 model Issues {
-  index      Int        @id @default(autoincrement())
+  index         Int       @id @default(autoincrement())
+  name          String
+  description   String?
+  status        String?   @default("Todo")
+  priority      String? @default("No")
+  createdAt     DateTime
+  updatedAt     DateTime  @updatedAt
+  project       Projects? @relation(fields: [projectsIndex], references: [index])
+  label         String?
+  team          Team      @relation(fields: [teamIndex], references: [team_index])
+  teamIndex     Int
+  assignedTo    Users?    @relation(fields: [usersUserId], references: [userId])
+  usersUserId   String?
+  projectsIndex String?
+}
+
+model Projects {
+  index  String   @id @default(uuid())
+  name   String
+  Issues Issues[]
+}
+
+model Users {
+  userId     String   @id @default(uuid())
   name       String
-  status     Status     @default(Todo)
-  priority   Priorities @default(No)
-  createdAt  DateTime
-  updatedAt  DateTime   @updatedAt
-  assingedTo String
-  project    String
-  label      Labels
-  team       Team       @relation(fields: [teamIndex], references: [team_index])
-  teamIndex  Int
+  email      String   @unique
+  issueIndex Int
+  Issues     Issues[]
 }
 
 enum Status {
   Todo
   InProgress
+  Done
   Backlog
   Canceled
   Duplicate
 }
 
-enum Priorities {
+enum Priority {
   No
   Low
   Medium
   High
 }
 
-enum Labels {
+enum Label {
   Bug
-  Feature
   Improvement
+  Performance
 }

@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import issueRouter from "./routes/issues";
+import { Prisma, PrismaClient } from "@prisma/client";
 const app = express();
 const cors = require("cors");
 app.use(
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 //     res.status(500).json({ message: "Internal Server Error", error: error });
 //   }
 // });
+
 app.listen(3001, () => {
   console.log(`Server is running on port 3001`);
 });
