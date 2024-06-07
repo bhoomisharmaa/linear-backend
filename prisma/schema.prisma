@@ -32,7 +32,7 @@ model Issues {
   name          String
   description   String?
   status        String?   @default("Todo")
-  priority      String? @default("No")
+  priority      String?   @default("No")
   createdAt     DateTime
   updatedAt     DateTime  @updatedAt
   project       Projects? @relation(fields: [projectsIndex], references: [index])

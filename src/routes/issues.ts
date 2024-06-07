@@ -113,7 +113,7 @@ router.post(
   }
 );
 
-async function createWorkshop() {
+async function createIssues(data: Prisma.IssuesCreateInput) {
   try {
     const workshop = await prisma.workspace.update({
       where: {
@@ -128,14 +128,7 @@ async function createWorkshop() {
               },
               data: {
                 issues: {
-                  create: [
-                    {
-                      name: "WHEEEEEEEEEEEEEEEE",
-                      createdAt: new Date(),
-                      priority: "No",
-                      status: "InProgress",
-                    },
-                  ],
+                  create: [data],
                 },
               },
             },
@@ -150,5 +143,21 @@ async function createWorkshop() {
     await prisma.$disconnect();
   }
 }
+router.post("/create-issues", async (req: Request, res: Response) => {
+  const { data } = req.body;
+  if (!data) {
+    return res
+      .status(400)
+      .send("updateItem, issueIndex, and updateKey are required");
+  }
+
+  try {
+    await createIssues(data);
+    res.status(200).send("Issue created successfully");
+  } catch (error) {
+    console.error("Error creating issue:", error);
+    res.status(500).send("Error creating issue");
+  }
+});
 // createWorkshop();
 export default router;
