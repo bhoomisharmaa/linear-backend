@@ -97,7 +97,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { updateItem, updateKey } = req.body;
     const { issueIndex } = req.params;
-    if (!updateItem || !issueIndex || !updateKey) {
+    if (!issueIndex || !updateKey) {
       return res
         .status(400)
         .send("updateItem, issueIndex, and updateKey are required");
