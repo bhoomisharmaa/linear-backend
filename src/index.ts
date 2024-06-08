@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import issueRouter from "./routes/issues";
+import teamRouter from "./routes/team";
 import { Prisma, PrismaClient } from "@prisma/client";
 const app = express();
 const cors = require("cors");
@@ -10,6 +11,7 @@ app.use(
 );
 app.use(express.json());
 app.use("/issues", issueRouter);
+app.use("/teams", teamRouter);
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
