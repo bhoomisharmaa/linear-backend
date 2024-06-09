@@ -108,7 +108,6 @@ router.post(
         .status(400)
         .send("updateItem, issueIndex, and updateKey are required");
     }
-
     try {
       await updateIssue(
         parseInt(issueIndex),
@@ -162,10 +161,8 @@ router.post(
   async (req: Request, res: Response) => {
     const { data } = req.body;
     const team_index = req.params.team_index;
-    if (!data) {
-      return res
-        .status(400)
-        .send("updateItem, issueIndex, and updateKey are required");
+    if (!data || !team_index) {
+      return res.status(400).send("data and team index are required");
     }
 
     try {
