@@ -9,7 +9,7 @@ router.get("/", (req: Request, res: Response) => {
   res.send("issue router is working");
 });
 
-async function getIssues(issueStatus: string, team_index: number) {
+async function getIssues(team_index: number, issueStatus?: string) {
   try {
     const issue = await prisma.workspace.findMany({
       where: {
@@ -40,13 +40,17 @@ async function getIssues(issueStatus: string, team_index: number) {
 }
 
 router.get(
-  "/:team_index/get-issues/:status",
+  "/:team_index/get-issues/:status?",
   async (req: Request, res: Response) => {
     try {
       const issueStatus = req.params.status;
       const team_index = req.params.team_index;
 
-      const issues = await getIssues(issueStatus, parseInt(team_index));
+      if (!team_index) {
+        res.status(404).send("Team Index is required to fetch issues");
+      }
+
+      const issues = await getIssues(parseInt(team_index), issueStatus);
       res.status(200).json(issues);
     } catch (error) {
       console.error("Error creating workspace:", error);
