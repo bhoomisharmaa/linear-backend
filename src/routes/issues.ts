@@ -65,7 +65,6 @@ async function updateIssue(
   data: Prisma.IssuesUpdateInput,
   teamIndex: number
 ) {
-  console.log(data);
   try {
     const issue = await prisma.workspace.update({
       where: {
