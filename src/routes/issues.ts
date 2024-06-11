@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { resolve } from "path";
+import { runInNewContext } from "vm";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -61,14 +62,11 @@ router.get(
 
 async function updateIssue(
   issueIndex: number,
-  updateKey: keyof Prisma.IssuesUpdateInput,
-  stuff: string,
+  data: Prisma.IssuesUpdateInput,
   teamIndex: number
 ) {
+  console.log(data);
   try {
-    const data: Prisma.IssuesUpdateInput = {
-      [updateKey]: stuff,
-    };
     const issue = await prisma.workspace.update({
       where: {
         id: 1,
@@ -83,7 +81,7 @@ async function updateIssue(
                   update: [
                     {
                       where: { index: issueIndex },
-                      data: data,
+                      data,
                     },
                   ],
                 },
@@ -104,19 +102,17 @@ async function updateIssue(
 router.post(
   "/update-issues/:teamIndex/:issueIndex",
   async (req: Request, res: Response) => {
-    const { updateItem, updateKey } = req.body;
     const issueIndex = req.params.issueIndex;
     const teamIndex = req.params.teamIndex;
-    if (!issueIndex || !updateKey) {
-      return res
-        .status(400)
-        .send("updateItem, issueIndex, and updateKey are required");
+    const { data } = req.body;
+    if (!issueIndex || !teamIndex) {
+      return res.status(400).send("issueIndex, and updateKey are required");
     }
     try {
       await updateIssue(
         parseInt(issueIndex),
-        updateKey,
-        updateItem,
+        data,
+
         parseInt(teamIndex)
       );
       res.status(200).send("Issue updated successfully");
