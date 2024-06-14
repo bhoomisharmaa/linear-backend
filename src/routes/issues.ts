@@ -173,5 +173,36 @@ router.post(
     }
   }
 );
-// createWorkshop();
+
+async function deleteIssue(issueIndex: number, teamIndex: number) {
+  try {
+    const deletedIssue = await prisma.issues.delete({
+      where: {
+        index: issueIndex,
+        AND: { teamIndex },
+      },
+    });
+    console.log(deletedIssue);
+  } catch (error) {
+    console.log("Error deleting issue:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+router.delete(
+  "/:teamIndex/deleteIssue/:issueIndex",
+  async (req: Request, res: Response) => {
+    const issueIndex = req.params.issueIndex;
+    const teamIndex = req.params.teamIndex;
+    if (!teamIndex || !issueIndex) {
+      res.status(404).send("Team index and issue index are required");
+    }
+    try {
+      await deleteIssue(parseInt(issueIndex), parseInt(teamIndex));
+      res.status(200).send("Issue deleted successfully");
+    } catch (error) {
+      res.status(500).send("Error deleting issue");
+    }
+  }
+);
 export default router;
