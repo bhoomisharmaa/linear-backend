@@ -176,13 +176,12 @@ router.post(
 
 async function deleteIssue(issueIndex: number, teamIndex: number) {
   try {
-    const deletedIssue = await prisma.issues.delete({
+    await prisma.issues.delete({
       where: {
         index: issueIndex,
         AND: { teamIndex },
       },
     });
-    console.log(deletedIssue);
   } catch (error) {
     console.log("Error deleting issue:", error);
   } finally {
