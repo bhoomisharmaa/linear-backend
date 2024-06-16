@@ -13,7 +13,7 @@ async function getTeam() {
   try {
     const workspace = await prisma.workspace.findMany({
       where: {
-        workName: "Bhoomi",
+        workName: "Tierra",
       },
       include: {
         team: {},

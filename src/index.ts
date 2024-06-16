@@ -3,6 +3,8 @@ import issueRouter from "./routes/issues";
 import teamRouter from "./routes/team";
 import { Prisma, PrismaClient } from "@prisma/client";
 const app = express();
+const prisma = new PrismaClient();
+
 const cors = require("cors");
 app.use(
   cors({
@@ -15,24 +17,24 @@ app.use("/teams", teamRouter);
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
-
-// app.post("/workspace", async (req, res) => {
-//   try {
-//     const { workspaceName } = req.body;
-//     if (!workspaceName) {
-//       return res.status(400).send("workspaceName is required");
-//     }
-
-//     const issue = await getIssues();
-//     res.status(201).json(issue);
-//   } catch (error) {
-//     console.error("Error creating workspace:", error);
-//     res.status(500).json({ message: "Internal Server Error", error: error });
-//   }
-// });
-
 app.listen(3001, () => {
   console.log(`Server is running on port 3001`);
 });
+
+async function getWorkspaceName() {
+  try {
+    const work = await prisma.workspace.findMany({
+      where: {
+        workName: "Tierra",
+      },
+    });
+  } catch (error) {
+    console.log("Error creating workshop", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+app.get("/get-workspace");
 
 module.exports = app;

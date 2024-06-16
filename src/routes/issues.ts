@@ -127,7 +127,7 @@ async function createIssues(
   team_index: number
 ) {
   try {
-    const workshop = await prisma.workspace.update({
+    await prisma.workspace.update({
       where: {
         id: 1,
       },
@@ -149,7 +149,7 @@ async function createIssues(
       },
     });
   } catch (error) {
-    console.error("Error deleting workspace:", error);
+    console.error("Error creating issue:", error);
     throw error;
   } finally {
     await prisma.$disconnect();
