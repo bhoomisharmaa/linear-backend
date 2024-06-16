@@ -18,10 +18,9 @@ phases:
     commands:
       - echo Build completed on `date`
 artifacts:
+  type: zip
   files:
     - "**/*"
-  type: zip
-
 cache:
   paths:
     - node_modules
