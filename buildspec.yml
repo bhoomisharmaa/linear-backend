@@ -21,7 +21,8 @@ artifacts:
   type: zip
   files:
     - "**/*"
-  name: linear-backend-build
+  name: linear-build
+  discard-paths: yes
 cache:
   paths:
     - node_modules
